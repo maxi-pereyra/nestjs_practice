@@ -23,6 +23,11 @@ import { CreateUserDto } from "./dtos/CreateUser.dto";
 import { CloudinaryService } from "./cloudinary.service";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { MinSizeValidatorPipe } from "src/pipes/min-size-validator.pipe";
+import { authService } from "./auth.service";
+import { UserCredentialsDto } from "./dtos/UserCredentials.dto";
+import { Roles } from "src/decorators/roles.decorators";
+import { Role } from "src/roles.enum";
+import { RolesGuard } from "src/guards/roles.guards";
 
 @Controller("users")
 //@UseGuards(AuthGuard)
@@ -31,6 +36,7 @@ export class UserController {
         private readonly UsersService: UsersService,
         private readonly usersDbservice: UsersDbService,
         private readonly cloudinaryService: CloudinaryService,
+        private readonly authService: authService
     ) {}
 
     @Get()
@@ -44,10 +50,13 @@ export class UserController {
     }
 
      @Get('profile')
-    getUsersProfile(@Headers('token') token?: string){
-        if(token !== '1234'){
-            return "Sin acceso"
-        }
+     @UseGuards(AuthGuard)
+    getUsersProfile(/*@Headers('token') token?: string*/ @Req() request: Request & {user:any}){
+        //if(token !== '1234'){
+        //    return "Sin acceso"
+        //}
+        console.log(request.user)
+
         return "perfil usuario"
     }
 
@@ -95,19 +104,32 @@ export class UserController {
         return "Esta ruta loguea el request"
     }
 
+    @Get('admin')
+    @Roles(Role.Admin)
+    @UseGuards(AuthGuard,RolesGuard)
+    getAdmin() {
+        return 'ruta protegida'
+    }
+
     @Get(':id')
     getUserById(@Param('id' , ParseUUIDPipe) id:string){
         //return this.UsersService.getUserById(Number(id))
         return this.usersDbservice.getUserById(id)
     }
-    @Post()
+    
+    @Post('signup')
     @UseInterceptors(DateAdderInterceptor)
     createUser(
         @Body() user: CreateUserDto, 
         @Req() request: Request & {now: string}){
         console.log('dentro del endpoint', request.now)
         //return this.UsersService.createUser(user)
-        return this.usersDbservice.saveUser({...user,createAt: request.now})
+        return this.authService.signUp({...user,createAt: request.now})
+    }
+
+    @Post('signin')
+    async signin(@Body() user:UserCredentialsDto){
+        return this.authService.signIn( user.email, user.password)
     }
 
     @Put()
@@ -119,5 +141,6 @@ export class UserController {
     deleteUser(){
         return "Esto elimina un usuario"
     }
-   
+
+    
 }

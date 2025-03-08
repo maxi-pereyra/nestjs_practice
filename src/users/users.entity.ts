@@ -12,5 +12,9 @@ export class User {
     @Column()
     email: string;
     @Column()
+    password: string;
+    @Column({default:false})
+    isAdmin: boolean;
+    @Column()
     createAt: string;
 }

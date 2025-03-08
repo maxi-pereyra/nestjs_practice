@@ -6,6 +6,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Todo } from './todos/todo.entity';
 import { User } from './users/users.entity';
 import typeOrmConfig from './config/typeorm';
+import { JwtModule } from '@nestjs/jwt';
 //import { APP_INTERCEPTOR } from '@nestjs/core';
 //import { AuthGuard } from './guards/auth.guards';
 //import { APP_GUARD } from '@nestjs/core';
@@ -31,7 +32,13 @@ import typeOrmConfig from './config/typeorm';
       };
     },
     }),
-    UserModule,TodosModule,
+    UserModule,
+    TodosModule,
+    JwtModule.register({
+      global: true,
+      signOptions: {expiresIn: '1h'},
+      secret: process.env.JWT_SECRET,
+    }),
   ],
   controllers: [],
   providers: [

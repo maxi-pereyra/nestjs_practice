@@ -8,17 +8,21 @@ export class UserRepository {
         {
             id: 1,
             name: "Name 1",
-            email: "email1@gmail"
+            email: "email1@gmail",
+            password: "1234"
         },
         {
             id: 2,
             name: "Name 2",
-            email: "email2@gmail"
+            email: "email2@gmail",
+            password: "1234"
+
         },
         {
             id: 3,
             name: "Name 3",
-            email: "email3@gmail"
+            email: "email3@gmail",
+            password: "1234"
         },
     ];
     async getUsers(){
