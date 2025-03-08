@@ -15,4 +15,9 @@ export class UsersDbService {
     getUserById(id: string){
         throw this.usersRepository.findOne({where:{ id }})
     }
+
+    getUserByEmail(email: string) {
+        return this.usersRepository.findOne({ where: {email}})
+    }
+
 }

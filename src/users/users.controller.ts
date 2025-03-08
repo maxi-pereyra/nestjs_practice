@@ -2,12 +2,16 @@ import {
     Body, 
     Controller, 
     Delete, 
+    FileTypeValidator, 
     Get, 
     Headers, 
     HttpCode, 
+    MaxFileSizeValidator, 
     Param, 
+    ParseFilePipe, 
     ParseUUIDPipe, 
-    Post, Put, Query, Req, Res, UseGuards, UseInterceptors } from "@nestjs/common";
+    Post, Put, Query, Req, Res, UploadedFile, UseGuards, UseInterceptors, 
+    UsePipes} from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { Request, Response } from "express";
 //import { User } from "./users.interface";
@@ -16,13 +20,17 @@ import { DateAdderInterceptor } from "src/interceptors/date-adder-interceptor";
 import { UsersDbService } from "./usersDB.service";
 //import { User as UserEntity } from "./users.entity";
 import { CreateUserDto } from "./dtos/CreateUser.dto";
+import { CloudinaryService } from "./cloudinary.service";
+import { FileInterceptor } from "@nestjs/platform-express";
+import { MinSizeValidatorPipe } from "src/pipes/min-size-validator.pipe";
 
 @Controller("users")
 //@UseGuards(AuthGuard)
 export class UserController {
     constructor(
         private readonly UsersService: UsersService,
-        private readonly usersDbservice: UsersDbService
+        private readonly usersDbservice: UsersDbService,
+        private readonly cloudinaryService: CloudinaryService,
     ) {}
 
     @Get()
@@ -48,6 +56,26 @@ export class UserController {
     @UseGuards(AuthGuard) //lo puedo usar para todos a la altura de la class
     getUsersProfileImages(){
         return "Esto trae el imagenes del perfil del usuario";
+    }
+
+    @Post('profile/images')
+    @UseInterceptors(FileInterceptor('image'))
+    @UsePipes(MinSizeValidatorPipe)
+    postUserImage(@UploadedFile(
+        new ParseFilePipe({
+            validators:[
+                new MaxFileSizeValidator({
+                    maxSize: 100000,
+                    message: 'el archivo debe ser menor a 100k',
+                }),
+                new FileTypeValidator({
+                    fileType: /(jpg|jpeg|png|webp)$/
+                })
+            ]
+        })
+    ) file: Express.Multer.File){
+      //  return this.cloudinaryService.uploadImage(file);
+        return file;
     }
 
     @HttpCode(418)

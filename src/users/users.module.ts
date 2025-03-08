@@ -6,6 +6,9 @@ import { UserRepository } from "./users.repository";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { User } from "./users.entity";
 import { UsersDbService } from "./usersDB.service";
+import { CloudinaryService } from "./cloudinary.service";
+import { CloudinaryConfig } from "src/config/cloudinary";
+
 //const mockUserService = {
 //getUsers: () => 'Esto es un servicio mock de usuarios '
 //}
@@ -20,6 +23,8 @@ import { UsersDbService } from "./usersDB.service";
         UsersService,
         UsersDbService,
         UserRepository,
+        CloudinaryService,
+        CloudinaryConfig,
         {
             provide:'API_USERS',
             useFactory: async () => {

@@ -26,4 +26,5 @@ export class UsersService {
     createUser(user: Omit<User, 'id'>): Promise<User> {
         return this.userRepositoty.createUser(user)
     }
+
 }
