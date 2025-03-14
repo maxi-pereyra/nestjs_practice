@@ -23,8 +23,8 @@ export class authService {
         if(!hashedPassword){
             throw new BadRequestException('password could not be hashed');
         }
-        this.usersService.saveUser({...user,password: hashedPassword});
-        return {success: "User created succesfuly!"}
+        return this.usersService.saveUser({...user,password: hashedPassword});
+        
     }
 
     async signIn(email: string , password: string)  {

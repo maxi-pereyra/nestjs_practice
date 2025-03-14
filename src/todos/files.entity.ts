@@ -18,7 +18,7 @@ export class File {
     @Column()
     mimeType: string;
 
-    @Column({type: 'bytea'})
+    @Column({type: 'longblob'})
     data: Buffer;
 
 

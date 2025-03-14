@@ -9,7 +9,7 @@ export class UsersDbService {
     ){}
 
     saveUser(user: Omit<User,'id'>){
-        this.usersRepository.save(user)
+       return this.usersRepository.save(user)
     }
 
     getUserById(id: string){

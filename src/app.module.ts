@@ -28,7 +28,6 @@ import { JwtModule } from '@nestjs/jwt';
       }
       return {
         ...typeOrmConfig,
-        entities: [User, Todo], // Asegúrate de que las entidades estén incluidas aquí
       };
     },
     }),
